@@ -1,0 +1,21 @@
+[project]
+name = "robust-pca-admm"
+version = "0.1.0"
+description = ""
+authors = [
+    {name = "Eirini Tzanaki", email = "irenetzan16@gmail.com"},
+    {name = "Dionysia Petropoulou", email = "petropdiony@gmail.com"}
+]
+readme = "README.md"
+requires-python = "^3.10"
+dependencies = [
+]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+packages = [{ include = "robust_pca_admm", from = "src" }]
+
