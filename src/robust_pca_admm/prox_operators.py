@@ -23,7 +23,7 @@ def l1_prox(X: np.ndarray, tau: float) -> np.ndarray:
         raise ValueError("tau must be non-negative")
     X = np.asarray(X) #ensure we have a Numpy array
     
-    #Soft-thresholding: shrinking magnitudes by tau
+    #soft-thresholding: shrinking magnitudes by tau
     S = np.sign(X) * np.maximum(np.abs(X) - tau, 0.0)
     return S
 
@@ -57,7 +57,8 @@ def nuclear_prox(X: np.ndarray, tau: float) -> np.ndarray:
     #s_shrunk[i] corresponds to s_i' in the mathematical formulation
     
     L = (U * s_shrunk) @ Vt #reconstruct the matrix after SVT:
-#multiplying U by s_shrunk scales each left singular vector u_i by s_shrunk[i]
-#This is equivalent to U @ diag(s_shrunk) @ Vt, but avoids creating the diagonal matrix.
+    #multiplying U by s_shrunk scales each left singular vector u_i by s_shrunk[i]
+    #this is equivalent to U @ diag(s_shrunk) @ Vt, but avoids creating the diagonal
+    #matrix
     
     return L
