@@ -4,6 +4,7 @@ import numpy as np
 
 from .prox_operators import l1_prox, nuclear_prox
 
+
 @dataclass
 class RPCAReport:
     """
@@ -17,6 +18,7 @@ class RPCAReport:
     lam: float #sparsity weight used in PCP(Principal Component Pursuit) objective
     rho: float #ADMM penalty parameter (augmented Lagrangian)
     
+
 def rpca_admm(
     M: np.ndarray,
     lam: float | None = None,
@@ -43,7 +45,8 @@ def rpca_admm(
     tol : float, optional
         Convergence tolerance of the relative primal residual. Defaults to 1e-7.
     verbose : bool, optional
-        If True, print diagnostic information at each iteration. Defaults to False.
+        If True, prints progress occasionally (first iteration, every 50 iterations
+        and at convergence). Defaults to False.
 
     Returns
     -------
@@ -75,4 +78,57 @@ def rpca_admm(
     L = np.zeros_like(M)
     S = np.zeros_like(M)
     Y = np.zeros_like(M)
+    
+    #compute Frobenius norm to normalize the primal residual
+    #this makes the stopping rule scale-invariant (independent of units/scaling)
+    norm_M = np.linalg.norm(M, ord="fro")
+
+    if norm_M == 0:
+        #special case: M is the zero matrix
+        #the decomposition is trivial since M = L + S holds for L = 0 and S = 0
+        report = RPCAReport(residuals=[0.0], iters=0, converged=True, lam=lam, rho=rho)
+        return L, S, report
+
+    #store convergence diagnostics
+    residuals: list[float] = []
+    converged = False
+    
+    #ADMM loop
+    for i in range(1, max_iter + 1):
+
+        #low-rank update: S fixed, compute a low-rank L that fits M - S (SVT on singular
+        #values)
+        L = nuclear_prox(M - S + Y, tau=1.0 / rho)
+
+        #sparse update: L fixed, compute a sparse S that fits M - L (soft-thresholding 
+        #on entries)
+        S = l1_prox(M - L + Y, tau=lam / rho)
+
+        #dual update: R is the constraint residual (how far L + S is from M)
+        #Y stores info about how far L + S is from M, helps correct it over iterations
+        R = M - L - S
+        Y = Y + R
+
+        #convergence check (scale-invariant): relative primal residual
+        relative_res = np.linalg.norm(R, ord="fro") / norm_M
+        residuals.append(relative_res)
+        
+        #print progress occasionally if verbose is enabled
+        if verbose and (i == 1 or i % 50 == 0 or relative_res < tol):
+            print(f"rpca_admm: iter={i:4d}  rel_res={relative_res:.3e}")
+
+        if relative_res < tol:
+            converged = True
+            break
+
+    report = RPCAReport(
+        residuals=residuals,
+        iters=len(residuals),
+        converged=converged,
+        lam=lam,
+        rho=rho,
+    )
+    return L, S, report
+
+
         
