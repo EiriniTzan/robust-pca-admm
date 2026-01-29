@@ -21,3 +21,8 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry]
 packages = [{ include = "robust_pca_admm", from = "src" }]
 
+
+[dependency-groups]
+dev = [
+    "ipykernel (>=7.1.0,<8.0.0)"
+]
