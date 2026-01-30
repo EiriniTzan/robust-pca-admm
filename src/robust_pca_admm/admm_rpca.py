@@ -16,7 +16,7 @@ class RPCAReport:
     iters: int #number of ADMM iterations executed
     converged: bool #True if ADMM reached convergence tolerance
     lam: float #sparsity weight used in PCP(Principal Component Pursuit) objective
-    rho: float #ADMM penalty parameter (augmented Lagrangian)
+    rho: float #ADMM penalty parameter in the augmented Lagrangian
     
 
 def rpca_admm(
