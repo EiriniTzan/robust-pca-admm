@@ -1,0 +1,8 @@
+digit: 3
+N: 80
+p_corrupt: 0.1
+lam(auto): 0.03571428571428571
+rho: 1.0
+iters: 1659
+converged: True
+final_residual: 9.99678466728586e-07

@@ -78,13 +78,13 @@ def main():
     out_dir = Path("results/mnist")
     out_dir.mkdir(parents=True, exist_ok=True)
 
-    # ---- Settings you can tweak ----
+    # ---- Settings we can modify ----
     digit = 3
     N = 80
-    p_corrupt = 0.10      # try 0.05–0.20
+    p_corrupt = 0.10    
     rho = 1.0
-    tol = 1e-7
-    max_iter = 1000
+    tol = 1e-6
+    max_iter = 3000
     # --------------------------------
 
     images = load_mnist(digit=digit, n_samples=N, root="data/mnist")  # (N,28,28) in [0,1]
